@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Viewer.qml</file>
+        <file>ViewerForm.ui.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>boson/BosonTabs.qml</file>
+        <file>boson/InfoControls.qml</file>
+        <file>controls/CameraControls.qml</file>
+        <file>controls/RangeDisplay.qml</file>
+        <file>controls/ValueSlider.qml</file>
+        <file>lepton/AgcControls.qml</file>
+        <file>lepton/InfoControls.qml</file>
+        <file>lepton/LeptonTabs.qml</file>
+        <file>lepton/VidControls.qml</file>
+        <file>boson/VidControls.qml</file>
+        <file>controls/SpotInfo.qml</file>
+        <file>controls/VideoRoi.qml</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>images/brand-logo.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,51 @@
+# Basic Ubuntu Setup
+# ==================
+
+# NVIDIA Jetson Xavier NX with Linux4Tegra (L4T) Image
+# ----------------------------------------------------
+# https://ngc.nvidia.com/catalog/containers/nvidia:l4t-base
+
+ARG BASE=nvcr.io/nvidia/l4t-base:r32.5.0
+FROM $BASE
+
+RUN apt-get update \
+&&  apt-get upgrade -y \
+&&  apt-get dist-upgrade -y \
+&&  apt-get install --no-install-recommends -y \
+    apt-utils \
+    libglu1-mesa-dev freeglut3-dev mesa-common-dev mesa-utils \
+    sudo \
+    locales locales-all \
+    gnupg2 \
+    software-properties-common \
+    nano \
+    git \
+    build-essential \
+    cmake \
+    usbutils \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+ENV LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8 \
+    LANGUAGE=C.UTF-8
+
+ENV CUDACXX=/usr/local/cuda/bin/nvcc
+ENV PATH=$PATH:/usr/local/cuda/bin
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
+
+# Check OpenGL
+# sudo glxinfo | grep OpenGL
+# OpenGL vendor string: NVIDIA Corporation
+# OpenGL renderer string: NVIDIA Tegra Xavier (nvgpu)/integrated
+# OpenGL version string: 4.6.0 NVIDIA 32.5.0
+# sudo glxgears
+# Displays glxgears window
+
+CMD ["bash"]
+
+
+
+
+
+

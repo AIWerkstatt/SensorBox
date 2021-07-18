@@ -1,0 +1,153 @@
+# Installation of the Sensor Suite
+# ================================
+# requires SparkFun RedBoard Turbo
+
+ARG BASE=aiwerkstatt/sensorbox/setup/sparkfunredboardturbo:v1.0-l4t5.0
+FROM $BASE AS baseimage
+
+
+RUN apt-get update \
+&&  apt-get install --no-install-recommends -y \
+    unzip \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+
+# SparkFun Temperature Sensor
+# ---------------------------
+
+# Install SparkFun TMP102 Breakout Library
+# https://github.com/sparkfun/SparkFun_TMP102_Arduino_Library
+# RUN arduino --install-library "SparkFun TMP102 Breakout":1.1.0
+# We use an already downloaded copy of the SparkFun TMP102 Breakout Library
+COPY ./SparkFun_TMP102_Temperature_Sensor/SparkFun_TMP102_Arduino_Library-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip SparkFun_TMP102_Arduino_Library-master.zip \
+&&  rm SparkFun_TMP102_Arduino_Library-master.zip \
+&&  mv SparkFun_TMP102_Arduino_Library-master SparkFun_TMP102_Breakout
+
+# Read Temperature
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_temperature
+COPY ./SparkFun_TMP102_Temperature_Sensor/read_temperature /opt/SparkFun_RedBoard_Turbo/Arduino/read_temperature
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_temperature/read_temperature.ino
+
+
+# SparkFun ICM20948 IMU
+# ---------------------
+
+# Install SparkFun ICM20948 Library
+# https://github.com/sparkfun/SparkFun_ICM-20948_ArduinoLibrary
+# RUN arduino --install-library "SparkFun 9DoF IMU Breakout - ICM 20948 - Arduino Library":1.2.5
+# We use an already downloaded copy of the SparkFun ICM20948 Library
+COPY ./SparkFun_ICM20948_IMU/SparkFun_ICM-20948_ArduinoLibrary-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip SparkFun_ICM-20948_ArduinoLibrary-master.zip \
+&&  rm SparkFun_ICM-20948_ArduinoLibrary-master.zip \
+&&  mv SparkFun_ICM-20948_ArduinoLibrary-master SparkFun_9DoF_IMU_Breakout_-_ICM_20948_-_Arduino_Library
+
+# Read IMU
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_imu
+COPY ./SparkFun_ICM20948_IMU/read_imu /opt/SparkFun_RedBoard_Turbo/Arduino/read_imu
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_imu/read_imu.ino
+
+
+# SparkFun LSM9DS1 IMU
+# --------------------
+
+# Install SparkFun LSM9DS1 Library
+# https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library
+# RUN arduino --install-library "SparkFun LSM9DS1 IMU":2.0.0
+# We use an already downloaded copy of the SparkFun LSM9DS1 Library
+COPY ./SparkFun_LSM9DS1_IMU/SparkFun_LSM9DS1_Arduino_Library-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip SparkFun_LSM9DS1_Arduino_Library-master.zip \
+&&  rm SparkFun_LSM9DS1_Arduino_Library-master.zip \
+&&  mv SparkFun_LSM9DS1_Arduino_Library-master SparkFun_LSM9DS1_IMU
+
+# Read IMU
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_imu_camera
+COPY ./SparkFun_LSM9DS1_IMU/read_imu_camera /opt/SparkFun_RedBoard_Turbo/Arduino/read_imu_camera
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_imu_camera/read_imu_camera.ino
+
+
+# SparkFun LPS25HB Pressure Sensor
+# --------------------------------
+
+# Install SparkFun LPS25HB Library
+# https://github.com/sparkfun/SparkFun_LPS25HB_Arduino_Library
+# RUN arduino --install-library "SparkFun LPS25HB Pressure Sensor Library":1.1.0
+# We use an already downloaded copy of the SparkFun LPS25HB Library
+COPY ./SparkFun_LPS25HB_Pressure_Sensor/SparkFun_LPS25HB_Arduino_Library-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip SparkFun_LPS25HB_Arduino_Library-master.zip \
+&&  rm SparkFun_LPS25HB_Arduino_Library-master.zip \
+&&  mv SparkFun_LPS25HB_Arduino_Library-master SparkFun_LPS25HB_Pressure_Sensor_Library
+
+# Read Pressure
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_pressure
+COPY ./SparkFun_LPS25HB_Pressure_Sensor/read_pressure /opt/SparkFun_RedBoard_Turbo/Arduino/read_pressure
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_pressure/read_pressure.ino
+
+
+# SparkFun NEO-M9N GPS
+# --------------------
+
+# Install SparkFun u-blox GNSS Arduino Library
+# https://github.com/sparkfun/SparkFun_u-blox_GNSS_Arduino_Library
+# RUN arduino --install-library "SparkFun u-blox GNSS Arduino Library":2.0.7
+# We use an already downloaded copy of the SparkFun u-blox GNSS Arduino Library
+COPY ./SparkFun_NEO-M9N_GPS/SparkFun_u-blox_GNSS_Arduino_Library-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip SparkFun_u-blox_GNSS_Arduino_Library-master.zip \
+&&  rm SparkFun_u-blox_GNSS_Arduino_Library-master.zip \
+&&  mv SparkFun_u-blox_GNSS_Arduino_Library-master SparkFun_u-blox_GNSS_Arduino_Library
+
+# Read GNSS
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_gnss
+COPY ./SparkFun_NEO-M9N_GPS/read_gnss /opt/SparkFun_RedBoard_Turbo/Arduino/read_gnss
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_gnss/read_gnss.ino
+
+
+# Zio INA219 Current and Voltage Sensor
+# -------------------------------------
+
+# Install Adafruit’s INA219 Library
+# https://github.com/adafruit/Adafruit_INA219
+# RUN arduino --install-library "Adafruit INA219":1.1.0
+# We use an already downloaded copy of the Adafruit INA219 Library
+COPY ./Zio_INA219_Current_and_Voltage_Sensor/Adafruit_INA219-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip Adafruit_INA219-master.zip \
+&&  rm Adafruit_INA219-master.zip \
+&&  mv Adafruit_INA219-master Adafruit_INA219
+
+# Install Adafruit’s BUS IO Library
+# https://github.com/adafruit/Adafruit_BusIO
+# RUN arduino --install-library "Adafruit BusIO":1.7.3
+# We use an already downloaded copy of the Adafruit BUS IO Library
+COPY ./Zio_INA219_Current_and_Voltage_Sensor/Adafruit_BusIO-master.zip /opt/SparkFun_RedBoard_Turbo/Arduino/libraries
+RUN cd /opt/SparkFun_RedBoard_Turbo/Arduino/libraries \
+&&  unzip Adafruit_BusIO-master.zip \
+&&  rm Adafruit_BusIO-master.zip \
+&&  mv Adafruit_BusIO-master Adafruit_BusIO
+
+# Read Power
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_power
+COPY ./Zio_INA219_Current_and_Voltage_Sensor/read_power /opt/SparkFun_RedBoard_Turbo/Arduino/read_power
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_power/read_power.ino
+
+
+# MaxBotix HRLV-MaxSonar-EZ4 Ultrasonic Range Finder
+# --------------------------------------------------
+
+# Read Range
+RUN mkdir -p opt/SparkFun_RedBoard_Turbo/Arduino/read_range
+COPY ./MaxBotix_HRLV-MaxSonar-EZ4_Ultrasonic_Range_Finder/read_range /opt/SparkFun_RedBoard_Turbo/Arduino/read_range
+# $: arduino --upload /opt/SparkFun_RedBoard_Turbo/Arduino/read_range/read_range.ino
+
+
+RUN chmod -R +666 /opt/SparkFun_RedBoard_Turbo
+
+CMD ["bash"]
+
+

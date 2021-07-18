@@ -1,0 +1,92 @@
+# Installation of Intel RealSense SDK 2.0
+# =======================================
+# https://github.com/IntelRealSense/librealsense
+
+# Choose installation method:
+ARG REALSENSE=realsense-debian
+
+ARG BASE=nvcr.io/nvidia/l4t-base:r32.5.0
+FROM $BASE AS baseimage
+
+# a) Debian package
+# -----------------
+# Set ARG REALSENSE=realsense-debian
+
+# Installed under /usr with
+# libraries under /usr/lib
+# header files under /usr/include
+# demos, tutorials and tests under /usr/bin. 
+
+FROM baseimage AS realsense-debian
+
+# Register the server's public key
+# Alternatively: RUN apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE 
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
+
+# Add the server to the list of repositories
+RUN echo "deb https://librealsense.intel.com/Debian/apt-repo bionic main" > /etc/apt/sources.list.d/realsense.list
+
+# Install Intel RealSense libraries
+RUN apt-get update \
+&&  apt-get install -y \
+    librealsense2-utils \
+    librealsense2-dev \
+    librealsense2-dbg \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# b) Build from source
+# --------------------
+# Set ARG REALSENSE=realsense-source
+
+# Installed under /usr/local with
+# libraries under /usr/local/lib
+# header files under /usr/local/include
+# demos, tutorials and tests under /usr/local/bin 
+# and source code under /opt/Intel_RealSense_D435i/librealsense
+
+FROM baseimage AS realsense-source
+
+# Install dependencies
+RUN apt-get update \
+&&  apt-get install -y \
+    libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev \
+    libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev \
+    git \
+    cmake \
+    udev \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# Download librealsense
+# git clone https://github.com/IntelRealSense/librealsense.git
+# git pull
+# git checkout v2.45.0
+RUN mkdir -p /opt/Intel_RealSense_D435i/librealsense
+COPY ./Intel_RealSense_D435i/librealsense /opt/Intel_RealSense_D435i/librealsense
+
+# Build and install librealsense
+RUN cd /opt/Intel_RealSense_D435i/librealsense \
+&&  mkdir -p build && cd build \
+&&  cmake .. -DFORCE_RSUSB_BACKEND=true -DBUILD_WITH_CUDA=true -DCMAKE_BUILD_TYPE=release \
+&&  make && make install
+
+# Set up udev rules on Host
+# bash install-udev_rules-Host.sh
+
+RUN chmod -R +666 /opt/Intel_RealSense_D435i
+
+FROM ${REALSENSE}
+
+# Update Firmware
+# ---------------
+# $: realsense-viewer
+# > Click Intel RealSense D354i More and select Install Recommended Firmware...
+
+CMD ["bash"]
+
+
+
+
+
+

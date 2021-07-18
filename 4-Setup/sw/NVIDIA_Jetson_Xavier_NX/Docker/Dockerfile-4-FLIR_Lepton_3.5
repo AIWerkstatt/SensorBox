@@ -1,0 +1,172 @@
+# Installation of FLIR Lepton 3.5 with GroupGets PureThermal 2
+# ============================================================
+
+ARG BASE=nvcr.io/nvidia/l4t-base:r32.5.0
+FROM $BASE
+
+ENV DEBIAN_FRONTEND="noninteractive"
+
+# gstreamer
+# ---------
+# We uninstall gstreamer first, because there seems to be a problem
+# with xvimagesink in nvcr.io/nvidia/l4t-base:r32.5.0
+
+RUN apt-get update \
+&&  apt-get autoremove --purge -y \
+    gstreamer1.0-tools \
+    gstreamer1.0-plugins-base \ 
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+&&  apt-get install -y \
+    gstreamer1.0-tools \
+    gstreamer1.0-alsa \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libgstreamer-plugins-good1.0-dev \
+    libgstreamer-plugins-bad1.0-dev \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# View Imagery
+# sudo gst-launch-1.0 v4l2src device=/dev/video2 ! videoconvert ! xvimagesink
+
+# v4l-utils
+# ---------
+
+RUN apt-get update \
+&&  apt-get install -y \
+    v4l-utils \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# List all video devices
+# v4l2-ctl --list-devices
+
+# Query a video device’s information
+# v4l2-ctl -d2 -D
+
+# libuvc (modified by GroupGets)
+# ------------------------------
+
+# Install dependencies
+RUN apt-get update \
+&&  apt-get install -y \
+    libusb-1.0-0-dev \
+    libjpeg-dev \
+    git \
+    cmake \
+    udev \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# Download libuvc
+# git clone https://github.com/groupgets/libuvc
+# We uncommented the following lines in the CMakeLists.txt:
+# find_package(jpeg QUIET)
+# if(NOT JPEG_FOUND)
+#   find_path(JPEG_INCLUDE_DIR jpeglib.h)
+#   if(JPEG_INCLUDE_DIR)
+#     set(JPEG_FOUND ON)
+#     set(JPEG_LIBRARIES -ljpeg)
+#   endif()
+# endif()
+RUN mkdir -p /opt/FLIR_Lepton_3.5/libuvc
+COPY ./FLIR_Lepton_3.5/libuvc /opt/FLIR_Lepton_3.5/libuvc
+
+# Build and install libuvc
+RUN cd /opt/FLIR_Lepton_3.5/libuvc \
+&&  mkdir -p build && cd build \
+&&  cmake .. \
+&&  make && make install
+
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+
+# Set up udev rules on Host
+# bash install-udev_rules-Host.sh
+
+# Capture Examples
+# ----------------
+
+# Install dependencies
+RUN apt-get update \
+&&  apt-get install -y \
+    python-opencv \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# Download capture examples
+# git clone https://github.com/rgoupgets/purethermal1-uvc-capture.git
+# We modified python/uvc-radiometry.py to change from Kelvin to Celsius
+# def display_temperature(img, val_k, loc, color):
+#   val = ktoc(val_k)
+#   cv2.putText(img,"{0:.1f} degC".format(val), loc, cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+RUN mkdir -p /opt/FLIR_Lepton_3.5/purethermal1-uvc-capture
+COPY ./FLIR_Lepton_3.5/purethermal1-uvc-capture /opt/FLIR_Lepton_3.5/purethermal1-uvc-capture
+
+# Print the Lepton's software and hardware version information
+# $: /opt/FLIR_Lepton_3.5/purethermal1-uvc-capture/python/uvc-deviceinfo.py
+# Run OpenCV example
+# $: /opt/FLIR_Lepton_3.5/purethermal1-uvc-capture/python/opencv-capture.py
+# Run min/max temperature example
+# $: /opt/FLIR_Lepton_3.5/purethermal1-uvc-capture/python/uvc-radiometry.py
+
+# GetThermal
+# ----------
+
+# Install dependencies
+RUN apt-get update \
+&&  apt-get install -y \
+     qt5-default \
+     qtmultimedia5-dev \
+     qtdeclarative5-dev \
+     qml-module-qtquick-controls2 \
+     qml-module-qtmultimedia \
+     qml-module-qtquick-layouts \
+     qml-module-qtquick-window2 \
+     qml-module-qtquick-templates2 \
+     qml-module-qtgraphicaleffects \
+     libusb-1.0-0-dev \
+     git \
+     cmake \
+&&  apt-get autoremove -y \
+&&  rm -rf /var/lib/apt/lists/*
+
+# Download GetThermal
+# git clone https://github.com/groupgets/GetThermal.git
+# cd GetThermal
+# git submodule init
+# git submodule update
+RUN mkdir -p /opt/FLIR_Lepton_3.5/GetThermal
+COPY ./FLIR_Lepton_3.5/GetThermal /opt/FLIR_Lepton_3.5/GetThermal
+
+# Build libuvc
+RUN cd /opt/FLIR_Lepton_3.5/GetThermal/libuvc \
+&&  mkdir -p build && cd build \
+&&  cmake .. \
+&&  make
+
+# Build GetThermal
+RUN cd /opt/FLIR_Lepton_3.5/GetThermal \
+&&  mkdir -p build && cd build \
+&&  qmake .. \
+&&  make
+
+# Run GetThermal
+# $: /opt/FLIR_Lepton_3.5/GetThermal/build/release/GetThermal
+
+RUN chmod -R +666 /opt/FLIR_Lepton_3.5
+
+CMD ["bash"]
+
+
+
+
+
+
