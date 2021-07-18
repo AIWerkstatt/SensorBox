@@ -1,4 +1,4 @@
-**[aiWerkstatt™](www.aiwerkstatt.com)** works on the development of a **Visual AI research platform**, 
+**[aiWerkstatt™](https://www.aiwerkstatt.com)** works on the development of a **Visual AI research platform**, 
 we call the **SensorBox™**.
 
 R&D (Research and Development) of a Visual AI (Artificial Intelligence) system requires 
@@ -23,17 +23,14 @@ processing platform, [SparkFun](https://www.sparkfun.com)’s microcontroller an
 and [Arducam](https://www.arducam.com)’s suite of cameras. 
 
 We provide this **GitHub repository** with all design and source code files and detailed documentation 
-with step-by-step instructions and **YouTube videos** on how to build the SensorBox™.
+with step-by-step instructions and **[YouTube videos](https://www.youtube.com/channel/UCgJB5recIT7bXP8dV0AoSTw/videos)** 
+on how to build the SensorBox™.
 
-So far, we completed the design, 3D printing, hardware assembly and basic software setup. Next, we are going to work on a ROS2 based infrastructure, a qt-based GUI, sensor calibration and sensor synchronization.
+So far, we completed the design, 3D printing, hardware assembly and basic software setup. 
+Next, we are going to work on a ROS2 based infrastructure, a qt-based GUI, sensor calibration 
+and sensor synchronization.
 
-Here is a video on how to **design**, **3D print** and **paint** the SensorBox™.
-
-Here is a video on how to **assemble** the SensorBox™.
-
-Here is a video on how to do the **basic software setup** of the SensorBox™.
-
-**[aiWerkstatt™](www.aiwerkstatt.com)** provides the **SensorBox™** as an **open source product** in the hope that it will provide 
+**[aiWerkstatt™](https://www.aiwerkstatt.com)** provides the **SensorBox™** as an **open source product** in the hope that it will provide 
 researchers in Visual AI with a jump start and when used by many that it will enable 
 collaborations and create synergies.
 
